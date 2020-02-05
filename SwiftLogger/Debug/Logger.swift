@@ -58,6 +58,28 @@ class Log {
         #endif
     }
     
+    private static var logFiles: [String]?
+    private static func isFileEnabled(_ fileName: String) -> Bool {
+        if logFiles == nil {
+            logFiles = ProcessInfo.processInfo
+                .environment["LoggingFiles"]?
+                .split(separator: ",")
+                .map({ str -> String in
+                    str.trimmingCharacters(in: CharacterSet.whitespaces)
+                })
+        }
+        
+        guard
+            let allowFileNames = logFiles,
+            allowFileNames.count > 0,
+            let fileName = sourceFileName(filePath: fileName).split(separator: ".").first
+            else {
+                return true
+        }
+        
+        return allowFileNames.contains(String(fileName))
+    }
+    
     // MARK: - Loging methods
     
     
@@ -70,7 +92,7 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func e( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled {
+        if isLoggingEnabled, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.e.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -84,7 +106,7 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func i ( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled {
+        if isLoggingEnabled, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.i.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -98,7 +120,7 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func d( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled {
+        if isLoggingEnabled, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.d.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -112,7 +134,7 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func v( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled {
+        if isLoggingEnabled, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.v.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -126,7 +148,7 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func w( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled {
+        if isLoggingEnabled, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.w.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -140,7 +162,7 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func s( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled {
+        if isLoggingEnabled, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.s.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
