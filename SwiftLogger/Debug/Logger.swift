@@ -66,7 +66,7 @@ class Log {
                 .split(separator: ",")
                 .map({ str -> String in
                     str.trimmingCharacters(in: CharacterSet.whitespaces)
-                })
+                }) ?? []
         }
         
         guard
