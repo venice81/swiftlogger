@@ -61,12 +61,21 @@ class Log {
     private static var logFiles: [String]?
     private static func isFileEnabled(_ fileName: String) -> Bool {
         if logFiles == nil {
-            logFiles = ProcessInfo.processInfo
-                .environment["LoggingFiles"]?
-                .split(separator: ",")
-                .map({ str -> String in
-                    str.trimmingCharacters(in: CharacterSet.whitespaces)
-                }) ?? []
+            guard let filepath = Bundle.main.path(forResource: "LogList", ofType: "txt") else {
+                print("LogList.txt is not found.")
+                logFiles = []
+                return false
+            }
+            
+            do {
+                let contents = try String(contentsOfFile: filepath)
+                logFiles = contents.split(separator: "\n").map { String($0).trimmingCharacters(in: CharacterSet.whitespaces) }.filter { (fileName) -> Bool in
+                    return !fileName.starts(with: "#") && !fileName.starts(with: "//")
+                }
+            } catch {
+                // contents could not be loaded
+                logFiles = []
+            }
         }
         
         guard

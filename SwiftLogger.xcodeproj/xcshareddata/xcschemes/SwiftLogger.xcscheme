@@ -50,13 +50,6 @@
             ReferencedContainer = "container:SwiftLogger.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "LoggingFiles"
-            value = "Empty or file names with using commas to separate"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

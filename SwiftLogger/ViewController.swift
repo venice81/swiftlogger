@@ -13,8 +13,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        print("Please check the project execution environment to use the filter of 'Logger.swift'")
+        print("Notice : add LogList.txt to .gitignore")
         Log.d("log enabled")
     }
 

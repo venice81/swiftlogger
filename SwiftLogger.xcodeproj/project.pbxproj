@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D2F99C923F134BA00A19FDF /* LogList.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2D2F99C723F12D5300A19FDF /* LogList.txt */; };
 		45D460CD1EC6429A00A82910 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D460CC1EC6429A00A82910 /* AppDelegate.swift */; };
 		45D460CF1EC6429A00A82910 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D460CE1EC6429A00A82910 /* ViewController.swift */; };
 		45D460D21EC6429A00A82910 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 45D460D01EC6429A00A82910 /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2D2F99C723F12D5300A19FDF /* LogList.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LogList.txt; sourceTree = "<group>"; };
 		45D460C91EC6429A00A82910 /* SwiftLogger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftLogger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		45D460CC1EC6429A00A82910 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		45D460CE1EC6429A00A82910 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -40,6 +42,7 @@
 		45D460C01EC6429900A82910 = {
 			isa = PBXGroup;
 			children = (
+				2D2F99C723F12D5300A19FDF /* LogList.txt */,
 				45D460CB1EC6429A00A82910 /* SwiftLogger */,
 				45D460CA1EC6429A00A82910 /* Products */,
 			);
@@ -138,6 +141,7 @@
 				45D460D71EC6429A00A82910 /* LaunchScreen.storyboard in Resources */,
 				45D460D41EC6429A00A82910 /* Assets.xcassets in Resources */,
 				45D460D21EC6429A00A82910 /* Main.storyboard in Resources */,
+				2D2F99C923F134BA00A19FDF /* LogList.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
