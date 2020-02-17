@@ -59,25 +59,8 @@ class Log {
     }
     
     private static var logFiles: [String]?
+    private static var logLevel: Int = 1
     private static func isFileEnabled(_ fileName: String) -> Bool {
-        if logFiles == nil {
-            guard let filepath = Bundle.main.path(forResource: "LogList", ofType: "txt") else {
-                print("LogList.txt is not found.")
-                logFiles = []
-                return false
-            }
-            
-            do {
-                let contents = try String(contentsOfFile: filepath)
-                logFiles = contents.split(separator: "\n").map { String($0).trimmingCharacters(in: CharacterSet.whitespaces) }.filter { (fileName) -> Bool in
-                    return !fileName.starts(with: "#") && !fileName.starts(with: "//")
-                }
-            } catch {
-                // contents could not be loaded
-                logFiles = []
-            }
-        }
-        
         guard
             let allowFileNames = logFiles,
             allowFileNames.count > 0,
@@ -87,6 +70,46 @@ class Log {
         }
         
         return allowFileNames.contains(String(fileName))
+    }
+    
+    private static func parseLogLevel(_ firstLine: String?) -> Int {
+        guard let firstLine = firstLine?.lowercased(), firstLine.starts(with: "#loglevel:") else {
+            return 1
+        }
+        
+        let level = firstLine.replacingOccurrences(of: "#loglevel:", with: "").trimmingCharacters(in: CharacterSet.whitespaces)
+        
+        if level == "verbose" {
+            return 1
+        } else if level == "debug" {
+            return 2
+        } else if level == "info" {
+            return 3
+        } else if level == "warning" {
+            return 4
+        } else if level == "error" {
+            return 5
+        }
+        return 6
+    }
+    
+    private static func loadConfigIfNeeded() {
+        guard let filepath = Bundle.main.path(forResource: "LogList", ofType: "txt") else {
+            print("LogList.txt is not found.")
+            logFiles = []
+            return
+        }
+        
+        do {
+            let contents = try String(contentsOfFile: filepath)
+            let lines = contents.split(separator: "\n").map { String($0).trimmingCharacters(in: CharacterSet.whitespaces) }
+            logLevel = parseLogLevel(lines.first)
+            print("log level : \(logLevel)")
+            logFiles = lines.filter { !$0.starts(with: "#") && !$0.starts(with: "//") }
+        } catch {
+            // contents could not be loaded
+            logFiles = []
+        }
     }
     
     // MARK: - Loging methods
@@ -101,7 +124,8 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func e( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled, isFileEnabled(filename) {
+        loadConfigIfNeeded()
+        if isLoggingEnabled, logLevel <= 5, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.e.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -115,7 +139,8 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func i ( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled, isFileEnabled(filename) {
+        loadConfigIfNeeded()
+        if isLoggingEnabled, logLevel <= 3, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.i.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -129,7 +154,8 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func d( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled, isFileEnabled(filename) {
+        loadConfigIfNeeded()
+        if isLoggingEnabled && logLevel <= 2 && isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.d.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -143,7 +169,8 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func v( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled, isFileEnabled(filename) {
+        loadConfigIfNeeded()
+        if isLoggingEnabled, logLevel <= 1, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.v.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -157,7 +184,8 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func w( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled, isFileEnabled(filename) {
+        loadConfigIfNeeded()
+        if isLoggingEnabled, logLevel <= 4, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.w.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -171,7 +199,8 @@ class Log {
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
     class func s( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
-        if isLoggingEnabled, isFileEnabled(filename) {
+        loadConfigIfNeeded()
+        if isLoggingEnabled, logLevel <= 6, isFileEnabled(filename) {
             print("\(Date().toString()) \(LogEvent.s.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
     }
@@ -181,7 +210,7 @@ class Log {
     ///
     /// - Parameter filePath: Full file path in bundle
     /// - Returns: File Name with extension
-    private class func sourceFileName(filePath: String) -> String {
+    private static func sourceFileName(filePath: String) -> String {
         let components = filePath.components(separatedBy: "/")
         return components.isEmpty ? "" : components.last!
     }
